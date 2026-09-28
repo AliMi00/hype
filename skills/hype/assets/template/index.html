@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>hype composition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=block" rel="stylesheet">
+<style>
+  /* 1rem = 1% of the short side. Write every size in rem and the video
+     works at 9:16, 16:9, 1:1 and 4:5 without a second layout. */
+  :root {
+    --bg: #0b0b12;
+    --fg: #f7f5ff;
+    --muted: #a7a3c2;
+    --accent: #ff4d6d;
+    --accent-2: #ffd166;
+  }
+  * { box-sizing: border-box; }
+  #stage { font-family: 'Inter', system-ui, sans-serif; color: var(--fg); background: var(--bg); }
+
+  .scene {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3rem; padding: 8rem; text-align: center;
+  }
+
+  /* Keep text out of the platform UI zones in portrait (captions, buttons). */
+  [data-orientation="portrait"] .scene { padding: 14rem 7rem 28rem; }
+
+  h1 { font-size: 11rem; line-height: 0.95; letter-spacing: -0.04em; margin: 0; font-weight: 800; }
+  h2 { font-size: 7rem; line-height: 1.02; letter-spacing: -0.03em; margin: 0; font-weight: 800; }
+  p  { font-size: 4rem; line-height: 1.3; margin: 0; color: var(--muted); }
+  .accent { color: var(--accent); }
+  .chip {
+    font-size: 3.2rem; font-weight: 600; padding: 1.6rem 3.4rem; border-radius: 99rem;
+    background: var(--accent); color: #fff;
+  }
+
+  /* Background motion driven by the timeline: --t is the global time. */
+  .glow {
+    position: absolute; width: 90rem; height: 90rem; border-radius: 50%;
+    background: radial-gradient(circle, var(--accent) 0%, transparent 65%);
+    opacity: 0.25; filter: blur(6rem);
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%) translate(calc(sin(var(--t) * 0.8rad) * 20rem), calc(cos(var(--t) * 0.6rad) * 25rem));
+  }
+
+  /* Landscape: put things side by side when it helps. */
+  [data-orientation="landscape"] .row { flex-direction: row; }
+  .row { display: flex; flex-direction: column; gap: 4rem; align-items: center; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="glow"></div>
+
+  <!-- 1. Hook: the first two seconds decide everything -->
+  <section class="scene" id="hook" data-start="0" data-end="2.6" data-out="fade">
+    <h1 data-split="words" data-in="up" data-at="0.1">Stop scrolling.</h1>
+  </section>
+
+  <!-- 2. Reveal -->
+  <section class="scene" id="reveal" data-start="2.4" data-end="6" data-in="fade" data-dur="0.3" data-out="fade">
+    <p data-in="fade" data-at="0.2">Meet</p>
+    <h1 data-in="pop" data-at="0.4">Your<span class="accent">Product</span></h1>
+    <p data-in="up" data-at="1">The one line that says what it does.</p>
+  </section>
+
+  <!-- 3. Proof -->
+  <section class="scene" id="proof" data-start="5.8" data-end="10" data-in="fade" data-dur="0.3" data-out="fade">
+    <h2 data-in="up"><span id="counter">0</span>+</h2>
+    <p data-in="up" data-at="0.3">people already use it</p>
+  </section>
+
+  <!-- 4. Call to action -->
+  <section class="scene" id="cta" data-start="9.8" data-end="14" data-in="fade" data-dur="0.3">
+    <h2 data-split="words" data-in="up">Try it free today</h2>
+    <div class="chip" data-in="pop" data-at="0.7">yourproduct.com</div>
+  </section>
+</div>
+
+<script src="hype.js"></script>
+<script>
+  hype
+    .config({ width: 1080, height: 1920, fps: 30, duration: 14, background: '#0b0b12', audio: null })
+    .update((t, h) => {
+      h.count(document.getElementById('counter'), 0, 12000, t, 6.0, 7.6);
+    })
+    .start();
+</script>
+</body>
+</html>
