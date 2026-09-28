@@ -1,0 +1,14 @@
+# Symlinks — never subject to text/EOL normalization
+.claude/skills/hype -text
+.agents/skills/hype -text
+.opencode/skills/hype -text
+
+# Binary media
+*.mp4 binary
+*.m4a binary
+*.jpg binary
+*.png binary
+
+# Scripts keep LF so they run on macOS/Linux after a Windows checkout
+*.sh text eol=lf
+*.mjs text eol=lf

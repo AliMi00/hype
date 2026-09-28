@@ -1,0 +1,15 @@
+{
+  "name": "hype",
+  "description": "Marketing videos for social media from one line.",
+  "owner": {
+    "name": "AliMi00",
+    "url": "https://github.com/AliMi00"
+  },
+  "plugins": [
+    {
+      "name": "hype",
+      "source": "./",
+      "description": "Turn anything you want to promote into ready-to-post social media videos (TikTok, Reels, Shorts, X, LinkedIn, YouTube) with music and captions."
+    }
+  ]
+}

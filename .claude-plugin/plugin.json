@@ -1,0 +1,13 @@
+{
+  "name": "hype",
+  "description": "Turn anything you want to promote into ready-to-post social media marketing videos. Pitches ideas or builds yours, renders every aspect ratio, writes the captions.",
+  "version": "0.1.0",
+  "author": {
+    "name": "AliMi00",
+    "url": "https://github.com/AliMi00"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/AliMi00/hype",
+  "repository": "https://github.com/AliMi00/hype",
+  "keywords": ["video", "marketing", "social-media", "tiktok", "reels", "shorts", "promo", "skill"]
+}

@@ -19,3 +19,11 @@ npm-debug.log*
 **/hype-output*/
 **/work/
 *.tmp.*
+
+# Agent folders: only the skill symlinks are tracked, never local settings
+.claude/*
+!.claude/skills/
+.agents/*
+!.agents/skills/
+.opencode/*
+!.opencode/skills/
