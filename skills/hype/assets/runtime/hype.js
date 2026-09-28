@@ -278,6 +278,7 @@
     document.documentElement.dataset.orientation = orient;
     stage.style.setProperty('--w', cfg.width + 'px');
     stage.style.setProperty('--h', cfg.height + 'px');
+    stage.style.setProperty('--duration', String(cfg.duration));
     const aspect = cfg.width / cfg.height;
     stage.style.setProperty('--aspect', aspect.toFixed(4));
   }

@@ -3,7 +3,8 @@
 //
 //   node new.mjs <dir> [--aspect 9:16] [--duration 15] [--force]
 //
-// Re-running with --runtime-only refreshes hype.js without touching index.html.
+// Re-running with --runtime-only refreshes hype.js + components.css without
+// touching index.html.
 
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -15,7 +16,7 @@ if (!dir) die('usage: node new.mjs <composition-dir> [--aspect 9:16] [--duration
 
 const assets = join(SCRIPTS_DIR, '..', 'assets');
 mkdirSync(join(dir, 'assets'), { recursive: true });
-copyFileSync(join(assets, 'runtime', 'hype.js'), join(dir, 'hype.js'));
+for (const f of ['hype.js', 'components.css']) copyFileSync(join(assets, 'runtime', f), join(dir, f));
 
 if (!args['runtime-only']) {
   const target = join(dir, 'index.html');
