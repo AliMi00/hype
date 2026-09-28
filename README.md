@@ -27,6 +27,11 @@ storyboard, captions and source, and
 [`examples/hype-about-hype-voice`](examples/hype-about-hype-voice) for the
 narrated version with captions.
 
+[![POV: your launch video took one line (with voiceover)](examples/hype-pov-voice/hype-pov-voice-16x9.jpg)](examples/hype-pov-voice/hype-pov-voice-9x16.mp4)
+
+Another idea from the same pitch, in native short-form style with a woman's
+voiceover: [`examples/hype-pov-voice`](examples/hype-pov-voice).
+
 ## Install
 
 **Claude Code (plugin):**
