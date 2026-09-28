@@ -20,7 +20,8 @@
 
 import { spawn } from 'node:child_process';
 import { existsSync, mkdirSync, statSync } from 'node:fs';
-import { basename, dirname, extname, join, relative, resolve } from 'node:path';
+import { writeFile } from 'node:fs/promises';
+import { basename, dirname, extname, join, resolve } from 'node:path';
 import { die, findFfmpeg, loadPlaywright, parseArgs, resolveSize, serveDir } from './lib/common.mjs';
 
 const args = parseArgs(process.argv.slice(2));
@@ -128,20 +129,26 @@ async function renderOne(size, multi) {
     if (args.stills === true || args.stills === 'auto') {
       times = [];
       for (const s of info.scenes) {
+        // Just before and after each cut (mid-transition), then the settled middle.
+        if (s.start > 0) times.push(s.start - 0.15, s.start + 0.25);
         times.push((s.start + s.end) / 2);
-        if (s.start > 0) times.push(s.start); // mid-transition check
       }
       times.push(info.duration - 1 / fps);
+      times = times.filter((t) => t >= 0 && t < info.duration);
       times = [...new Set(times.map((t) => +t.toFixed(2)))].sort((a, b) => a - b);
     } else {
       times = String(args.stills).split(',').map(Number);
     }
+    const shots = [];
     for (const t of times) {
       await seek(p, t);
       const name = `t${t.toFixed(2).padStart(6, '0')}.png`;
-      await p.screenshot({ path: join(dir, name) });
+      const buf = await p.screenshot({ path: join(dir, name) });
+      shots.push({ t, buf });
     }
-    log(`${times.length} stills (${label}) → ${relative(process.cwd(), dir) || dir}`);
+    const sheet = await contactSheet(shots, info);
+    await writeFile(join(dir, 'sheet.png'), sheet);
+    log(`${times.length} stills (${label}) → ${dir}  (overview: ${join(dir, 'sheet.png')})`);
     await ctx.close();
     return;
   }
@@ -208,4 +215,28 @@ async function renderOne(size, multi) {
   await ctx.close();
   const secs = ((Date.now() - started) / 1000).toFixed(1);
   log(`${process.stderr.isTTY ? '\r' : ''}${label} ${info.duration}s @ ${fps}fps${audio ? ' + audio' : ''} → ${out} (${secs}s)`);
+}
+
+// One labelled overview image of all stills, so a whole aspect can be
+// reviewed at a glance.
+async function contactSheet(shots, info) {
+  const cols = info.width >= info.height ? 3 : 5;
+  const cellW = info.width >= info.height ? 480 : 300;
+  const cellH = Math.round((cellW * info.height) / info.width);
+  const ctx = await browser.newContext({ viewport: { width: cols * (cellW + 12) + 12, height: 200 }, deviceScaleFactor: 1 });
+  const p = await ctx.newPage();
+  const cells = shots
+    .map(({ t, buf }) => {
+      const scene = info.scenes.find((s) => t >= s.start && t < s.end);
+      return `<figure><img src="data:image/png;base64,${buf.toString('base64')}"><figcaption>${t.toFixed(2)}s · ${scene ? scene.id : ''}</figcaption></figure>`;
+    })
+    .join('');
+  await p.setContent(`<style>
+    body{margin:0;padding:12px;background:#222;font:14px system-ui;color:#ddd;display:grid;grid-template-columns:repeat(${cols},${cellW}px);gap:12px}
+    figure{margin:0} img{display:block;width:${cellW}px;height:${cellH}px;outline:1px solid #444}
+    figcaption{padding:4px 2px 0}
+  </style>${cells}`);
+  const buf = await p.screenshot({ fullPage: true });
+  await ctx.close();
+  return buf;
 }
