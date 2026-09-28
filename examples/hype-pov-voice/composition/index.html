@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>POV: your launch video took one line</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;800;900&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
+<link href="components.css" rel="stylesheet">
+<style>
+  :root {
+    --cream: #fff3e4;
+    --ink: #1d1712;
+    --orange: #ff6a3d;
+    --c-accent: var(--orange);
+  }
+  * { box-sizing: border-box; }
+  #stage {
+    font-family: 'Inter', system-ui, sans-serif; color: var(--ink);
+    background: radial-gradient(120% 80% at 20% 0%, #ffe2c4 0%, var(--cream) 55%, #ffeede 100%);
+  }
+  .scene {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4rem; padding: 8rem; text-align: center;
+  }
+  [data-orientation="portrait"] .scene { padding: 12rem 8rem 46rem; }
+
+  /* native caption-box stack */
+  .boxes { display: flex; flex-direction: column; align-items: center; gap: 1.6rem; }
+  .boxes .caption { font-size: 8.5rem; line-height: 1.2; font-family: 'Inter', sans-serif; font-weight: 900; }
+  [data-orientation="landscape"] .boxes .caption { font-size: 7.5rem; }
+  .tag .caption { font-size: 6.5rem; }
+  [data-orientation="portrait"] .tag .caption { font-size: 7.5rem; }
+
+  /* terminal */
+  .terminal { width: 90rem; font-size: 4.8rem; font-family: 'JetBrains Mono', monospace; }
+  [data-orientation="landscape"] .terminal { width: 110rem; font-size: 3.8rem; }
+  .terminal .p { color: #ffb86b; }
+  .terminal .ok { color: #7ee2a8; }
+  .terminal .dim { color: #8a8fa3; }
+
+  /* phone playing a real /hype video */
+  .phone { width: 52rem; rotate: calc(-4deg + var(--p) * 6deg); }
+  [data-orientation="landscape"] .phone { width: 40rem; }
+  [data-orientation="square"] .phone { width: 30rem; }
+  [data-orientation="square"] #result { padding-bottom: 16rem; }
+  .phone > .screen { background: #0c0a14; }
+  #made { display: flex; gap: 6rem; align-items: center; }
+  [data-orientation="portrait"] #made { flex-direction: column; gap: 5rem; }
+  [data-orientation="square"] #made { gap: 4rem; }
+
+  /* cta */
+  #cta h1 { font: 900 22rem/0.9 'JetBrains Mono', monospace; letter-spacing: -0.06em; margin: 0; }
+  #cta .pill { font: 700 4.2rem 'JetBrains Mono', monospace; padding: 2.4rem 4.8rem; }
+  #cta .free { font-size: 5rem; font-weight: 800; margin: 0; }
+  [data-orientation="portrait"] #cta { justify-content: center; }
+
+  /* voice captions: dark ink on cream reads better than white outline */
+  .vo-captions { color: var(--ink); -webkit-text-stroke: 0; text-shadow: none; font-family: 'Inter', sans-serif; }
+  .vo-captions span { background: #fff; padding: 0.2rem 1.4rem; border-radius: 1.2rem; margin: 0.5rem 0.1rem; box-shadow: 0 0.6rem 2rem rgba(80, 40, 0, 0.12); }
+  .vo-captions .now { color: #fff; background: var(--orange); scale: 1.06; }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- 1. Hook: native POV caption boxes -->
+  <section class="scene" id="hook" data-start="0" data-end="3" data-out="left" data-out-dur="0.3">
+    <div class="boxes">
+      <span><span class="caption" data-in="pop" data-at="0" data-dur="0.35">POV:</span></span>
+      <span><span class="caption" data-in="pop" data-at="0.35" data-dur="0.35">your launch video</span></span>
+      <span><span class="caption accent" data-in="pop" data-at="0.8" data-dur="0.4">took one line</span></span>
+    </div>
+  </section>
+
+  <!-- 2. One line → ideas -->
+  <section class="scene" id="typed" data-start="3" data-end="7" data-in="right" data-dur="0.35" data-out="left" data-out-dur="0.3">
+    <div class="tag" data-in="pop" data-at="0.1"><span class="caption dark">literally just this</span></div>
+    <div class="terminal" data-in="up" data-at="0.2">
+      <div><span class="p">&gt; </span><span id="cmd"></span></div>
+      <div class="dim" data-in="fade" data-at="1.5" data-dur="0.2">reading your project…</div>
+      <div class="ok" data-in="left" data-at="1.9" data-dur="0.3">✓ 5 ideas that fit</div>
+      <div class="ok" data-in="left" data-at="2.3" data-dur="0.3">✓ pick one, or bring yours</div>
+    </div>
+  </section>
+
+  <!-- 3. The result, playing -->
+  <section class="scene" id="result" data-start="7" data-end="11.5" data-in="right" data-dur="0.35" data-out="zoom" data-out-dur="0.3">
+    <div id="made">
+      <div class="tag" data-in="pop" data-at="0.15"><span class="caption dark">it made this</span></div>
+      <div class="phone" data-in="up" data-at="0.2" data-dur="0.6">
+        <div class="screen"><video src="assets/made-with-hype.mp4" data-offset="6.3"></video></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. CTA -->
+  <section class="scene" id="cta" data-start="11.5" data-end="15" data-in="fade" data-dur="0.25">
+    <h1 data-in="pop" data-at="0.1" data-dur="0.5">/hype</h1>
+    <p class="free" data-in="up" data-at="0.45">free · open source</p>
+    <div class="pill" data-in="pop" data-at="0.8">github.com/AliMi00/hype</div>
+  </section>
+
+  <div class="vo-captions" data-captions="chunk" data-chunk="3"></div>
+  <div class="progress"></div>
+</div>
+
+<script src="hype.js"></script>
+<script>
+  const cmd = document.getElementById('cmd');
+  hype
+    .config({ width: 1080, height: 1920, fps: 30, duration: 15, background: '#fff3e4', audio: 'audio.m4a', captions: 'voice.json' })
+    .update((t, h) => {
+      h.typewriter(cmd, '/hype --voice', t, 3.35, 16, t < 4.6);
+    })
+    .start();
+</script>
+</body>
+</html>
