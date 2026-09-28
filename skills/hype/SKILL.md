@@ -88,7 +88,7 @@ hype-output/
   ideas.md              the pitched ideas (suggest mode)
   <video-slug>/
     plan.md             script + storyboard
-    composition/        index.html, hype.js, components.css, assets/, music.wav
+    composition/        index.html, hype.js, components.css, assets/, music.m4a
     <video-slug>-9x16.mp4 / .jpg   one per aspect (poster = .jpg)
     captions.md         post copy per platform, hashtags, alt text
   work/                 stills, downloads, scratch
@@ -144,7 +144,7 @@ given (~0.3s per word, counted once the line is fully in).
 1. `node <skill-dir>/scripts/new.mjs hype-output/<slug>/composition --aspect <first aspect> --duration <s>`
 2. Replace the template scenes with the storyboard. Use real material from the
    source (UI, components, screenshots, product photos, copy, colors, fonts).
-3. `node <skill-dir>/scripts/soundtrack.mjs --duration <s> --mood <mood> --sfx "<cues>" --out hype-output/<slug>/composition/music.wav --beats hype-output/work/beats.json`
+3. `node <skill-dir>/scripts/soundtrack.mjs --duration <s> --mood <mood> --sfx "<cues>" --out hype-output/<slug>/composition/music.m4a --beats hype-output/work/beats.json`
    (skip with `--no-music`; you may also use a track the user provides).
 4. Render review stills for **every** requested aspect:
    `node <skill-dir>/scripts/render.mjs hype-output/<slug>/composition --aspect <list> --stills auto --out-dir hype-output/work/stills`

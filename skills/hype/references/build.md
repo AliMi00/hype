@@ -64,7 +64,7 @@ timeline automatically (they start at t=0 — use `animation-delay` for timing).
 
 ```js
 hype
-  .config({ width: 1080, height: 1920, fps: 30, duration: 15, background: '#0b0b12', audio: 'music.wav' })
+  .config({ width: 1080, height: 1920, fps: 30, duration: 15, background: '#0b0b12', audio: 'music.m4a' })
   .update((t, h) => {
     // runs every frame; t = seconds. Make everything a pure function of t.
     h.typewriter(el, 'prompt: make me a logo', t, 2.0, 22);          // text, start, chars/sec
@@ -118,7 +118,7 @@ Override brand colors with `--c-accent`, `--c-fg`, `--c-bg`, `--c-radius`.
 ```bash
 node <skill-dir>/scripts/soundtrack.mjs --duration 15 --mood upbeat \
   --sfx "whoosh@2.0,pop@2.6,pop@3.1*0.6,typing@4-5.2,ding@5.4,riser@9-11,impact@11,sparkle@13" \
-  --out hype-output/<slug>/composition/music.wav --beats hype-output/work/beats.json
+  --out hype-output/<slug>/composition/music.m4a --beats hype-output/work/beats.json
 ```
 
 Moods: `upbeat playful chill lofi corporate epic tense hype`. `--bpm`, `--key`
@@ -146,10 +146,12 @@ node <skill-dir>/scripts/render.mjs hype-output/<slug>/composition \
   --aspect 9:16,1:1 --stills auto --out-dir hype-output/work/stills
 ```
 
-`auto` captures the middle of every scene and each scene boundary
-(mid-transition). Look at every image. Check: text fits and isn't clipped;
-nothing important in the platform UI zones; contrast; no collisions; layout
-makes sense in every orientation; transitions aren't muddy. Fix and re-check.
+`auto` captures the settled middle of every scene plus just before and just
+after every cut (mid-transition). Open `sheet.png` — all stills on one
+labelled image — then zoom into single stills where needed. Check: text fits
+and isn't clipped; nothing important in the platform UI zones; contrast; no
+collisions; layout makes sense in every orientation; transitions aren't
+muddy. Fix and re-check. With several aspects, each gets its own subfolder.
 Use `--still <t> --out file.png` to inspect a single moment.
 
 If the page fails to become ready, the renderer prints page errors — fix those

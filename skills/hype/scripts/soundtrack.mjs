@@ -8,14 +8,17 @@
 //     [--sfx "whoosh@2.4,pop@3.1,impact@6,riser@4.2-6,ding@9,typing@10-11.5"] \
 //     [--no-music] [--no-ending] [--beats beats.json]
 //
+// --out may be .wav, or .m4a/.mp3 (smaller; needs ffmpeg).
+//
 // Moods: upbeat, playful, chill, lofi, corporate, epic, tense, hype
 // SFX:   whoosh, swipe, pop, click, impact, riser (a range: start-end), ding,
 //        typing (a range), boom, sparkle
 //
 // Print the beat grid (for cutting on the beat) with --beats <file.json>.
 
-import { writeFileSync } from 'node:fs';
-import { die, parseArgs } from './lib/common.mjs';
+import { spawnSync } from 'node:child_process';
+import { unlinkSync, writeFileSync } from 'node:fs';
+import { die, findFfmpeg, parseArgs } from './lib/common.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 if (args.help) {
@@ -512,7 +515,17 @@ for (let i = 0; i < N; i++) {
   data.writeInt16LE(Math.round(Math.max(-1, Math.min(1, master[0][i] * norm)) * 32767), 44 + i * 4);
   data.writeInt16LE(Math.round(Math.max(-1, Math.min(1, master[1][i] * norm)) * 32767), 46 + i * 4);
 }
-writeFileSync(out, data);
+if (/\.wav$/i.test(out)) writeFileSync(out, data);
+else {
+  const ff = findFfmpeg();
+  if (!ff) die('writing .m4a/.mp3 needs ffmpeg — install it or use a .wav output');
+  const tmp = `${out}.tmp.wav`;
+  writeFileSync(tmp, data);
+  const codec = /\.mp3$/i.test(out) ? ['-c:a', 'libmp3lame', '-b:a', '192k'] : ['-c:a', 'aac', '-b:a', '192k'];
+  const r = spawnSync(ff, ['-y', '-loglevel', 'error', '-i', tmp, ...codec, out], { stdio: 'inherit' });
+  unlinkSync(tmp);
+  if (r.status !== 0) die(`ffmpeg could not encode ${out}`);
+}
 
 const grid = { bpm, beat: +beat.toFixed(4), bar: +bar.toFixed(4), mood: moodName, key: args.key || (mood.minor ? 'A minor' : 'C major'), finalHit: +lastHit.toFixed(3), beats, downbeats };
 if (args.beats) writeFileSync(args.beats, JSON.stringify(grid, null, 2));
