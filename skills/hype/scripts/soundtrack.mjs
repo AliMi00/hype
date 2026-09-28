@@ -6,9 +6,13 @@
 //   node soundtrack.mjs --duration 18 --mood upbeat --out music.wav \
 //     [--bpm 120] [--key C] [--seed 7] \
 //     [--sfx "whoosh@2.4,pop@3.1,impact@6,riser@4.2-6,ding@9,typing@10-11.5"] \
-//     [--no-music] [--no-ending] [--beats beats.json]
+//     [--no-music] [--no-ending] [--beats beats.json] [--voice voice.wav]
 //
-// --out may be .wav, or .m4a/.mp3 (smaller; needs ffmpeg).
+// --voice mixes a voiceover (from voice.mjs, or any recording) on top and
+// ducks the music + sfx under it so every word is clear.
+//
+// --out may be .wav, or .m4a/.mp3 (smaller; needs ffmpeg). With ffmpeg the
+// mix is loudness-normalized to -14 LUFS (change with --lufs).
 //
 // Moods: upbeat, playful, chill, lofi, corporate, epic, tense, hype
 // SFX:   whoosh, swipe, pop, click, impact, riser (a range: start-end), ding,
@@ -17,7 +21,7 @@
 // Print the beat grid (for cutting on the beat) with --beats <file.json>.
 
 import { spawnSync } from 'node:child_process';
-import { unlinkSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { die, findFfmpeg, parseArgs } from './lib/common.mjs';
 
 const args = parseArgs(process.argv.slice(2));
@@ -485,12 +489,82 @@ const musicGain = args['music-gain'] !== undefined ? Number(args['music-gain']) 
 const sfxGain = args['sfx-gain'] !== undefined ? Number(args['sfx-gain']) : 0.8;
 const fadeIn = Math.floor(0.02 * SR);
 const fadeOut = Math.floor(Math.min(0.6, duration * 0.1) * SR);
+const voice = args.voice ? readVoice(args.voice) : null;
+const vDuck = voice ? voiceDuck(voice) : null;
+const voiceGain = args['voice-gain'] !== undefined ? Number(args['voice-gain']) : 1;
 for (let i = 0; i < N; i++) {
   const edge = Math.min(1, i / fadeIn, (N - i) / fadeOut);
   for (let c = 0; c < 2; c++) {
     let v = (drums[c][i] * 0.9 + music[c][i] * duckEnv[i]) * musicGain + sfx[c][i] * sfxGain + verb[c][i];
     master[c][i] = Math.tanh(v * 1.1) * edge;
+    if (voice) master[c][i] = master[c][i] * vDuck[i] + voice[i] * voiceGain;
   }
+}
+
+// Read a voice track as mono 44.1 kHz floats, length N. Non-WAV files are
+// decoded with ffmpeg first.
+function readVoice(file) {
+  if (!existsSync(file)) die(`voice file not found: ${file}`);
+  let buf;
+  if (/\.wav$/i.test(file)) buf = readFileSync(file);
+  else {
+    const ff = findFfmpeg();
+    if (!ff) die('reading a non-WAV voice track needs ffmpeg');
+    const r = spawnSync(ff, ['-loglevel', 'error', '-i', file, '-ac', '1', '-ar', String(SR), '-c:a', 'pcm_s16le', '-f', 'wav', '-'], { maxBuffer: 1 << 30 });
+    if (r.status !== 0) die(`ffmpeg could not read ${file}`);
+    buf = r.stdout;
+  }
+  let off = 12, fmt = null, pcm = null;
+  while (off + 8 <= buf.length) {
+    const id = buf.toString('ascii', off, off + 4);
+    let size = buf.readUInt32LE(off + 4);
+    if (id === 'data' && (size === 0 || size === 0xffffffff || off + 8 + size > buf.length)) size = buf.length - off - 8;
+    if (id === 'fmt ') fmt = { format: buf.readUInt16LE(off + 8), ch: buf.readUInt16LE(off + 10), sr: buf.readUInt32LE(off + 12), bits: buf.readUInt16LE(off + 22) };
+    if (id === 'data') pcm = buf.subarray(off + 8, off + 8 + size);
+    off += 8 + size + (size % 2);
+  }
+  if (!fmt || !pcm) die(`${file} is not a readable WAV`);
+  const bytes = fmt.bits / 8;
+  const frames = Math.floor(pcm.length / (bytes * fmt.ch));
+  const mono = new Float32Array(frames);
+  for (let i = 0; i < frames; i++) {
+    let sum = 0;
+    for (let c = 0; c < fmt.ch; c++) {
+      const o = (i * fmt.ch + c) * bytes;
+      sum += fmt.format === 3 ? pcm.readFloatLE(o) : fmt.bits === 16 ? pcm.readInt16LE(o) / 32768 : fmt.bits === 24 ? pcm.readIntLE(o, 3) / 8388608 : pcm.readInt32LE(o) / 2147483648;
+    }
+    mono[i] = sum / fmt.ch;
+  }
+  const out = new Float32Array(N);
+  const k = fmt.sr / SR;
+  for (let i = 0; i < N; i++) {
+    const x = i * k, j = Math.floor(x), f = x - j;
+    if (j + 1 < frames) out[i] = mono[j] * (1 - f) + mono[j + 1] * f;
+  }
+  if (frames * (SR / fmt.sr) > N + SR * 0.1) console.error(`warning: the voice track is longer than --duration; it gets cut at ${duration}s`);
+  return out;
+}
+
+// Gain for the music bus: dips while someone is speaking (fast attack, slow
+// release, and it starts dipping slightly before each phrase).
+function voiceDuck(v) {
+  const depth = args['duck'] !== undefined ? Number(args['duck']) : 0.65;
+  const env = new Float32Array(N);
+  const atk = Math.exp(-1 / (0.01 * SR));
+  const rel = Math.exp(-1 / (0.35 * SR));
+  let e = 0;
+  for (let i = 0; i < N; i++) {
+    const x = Math.abs(v[i]);
+    e = x > e ? atk * e + (1 - atk) * x : rel * e + (1 - rel) * x;
+    env[i] = e;
+  }
+  const look = Math.round(0.08 * SR);
+  const g = new Float32Array(N);
+  for (let i = 0; i < N; i++) {
+    const lvl = Math.min(1, (env[Math.min(N - 1, i + look)] || 0) / 0.05);
+    g[i] = 1 - depth * lvl;
+  }
+  return g;
 }
 
 // normalize to about -2 dBFS peak (leaves room for true-peak overs)
@@ -515,14 +589,19 @@ for (let i = 0; i < N; i++) {
   data.writeInt16LE(Math.round(Math.max(-1, Math.min(1, master[0][i] * norm)) * 32767), 44 + i * 4);
   data.writeInt16LE(Math.round(Math.max(-1, Math.min(1, master[1][i] * norm)) * 32767), 46 + i * 4);
 }
-if (/\.wav$/i.test(out)) writeFileSync(out, data);
-else {
-  const ff = findFfmpeg();
-  if (!ff) die('writing .m4a/.mp3 needs ffmpeg — install it or use a .wav output');
+// Loudness-normalize to what the platforms play back at (-14 LUFS, -1.5 dBTP)
+// when ffmpeg is around; otherwise keep the peak-normalized mix.
+const ff = findFfmpeg();
+const target = args.lufs !== undefined ? Number(args.lufs) : -14;
+if (!ff) {
+  if (!/\.wav$/i.test(out)) die('writing .m4a/.mp3 needs ffmpeg — install it or use a .wav output');
+  writeFileSync(out, data);
+} else {
   const tmp = `${out}.tmp.wav`;
   writeFileSync(tmp, data);
-  const codec = /\.mp3$/i.test(out) ? ['-c:a', 'libmp3lame', '-b:a', '192k'] : ['-c:a', 'aac', '-b:a', '192k'];
-  const r = spawnSync(ff, ['-y', '-loglevel', 'error', '-i', tmp, ...codec, out], { stdio: 'inherit' });
+  const codec = /\.mp3$/i.test(out) ? ['-c:a', 'libmp3lame', '-b:a', '192k'] : /\.wav$/i.test(out) ? ['-c:a', 'pcm_s16le'] : ['-c:a', 'aac', '-b:a', '192k'];
+  const af = ['-af', `loudnorm=I=${target}:TP=-1.5:LRA=11`, '-ar', String(SR)];
+  const r = spawnSync(ff, ['-y', '-loglevel', 'error', '-i', tmp, ...af, ...codec, out], { stdio: 'inherit' });
   unlinkSync(tmp);
   if (r.status !== 0) die(`ffmpeg could not encode ${out}`);
 }
