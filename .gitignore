@@ -1,0 +1,21 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Secrets — never commit these
+.env
+.env.*
+*.pem
+*.key
+
+# hype output (renders, frames, work files)
+**/hype-output*/
+**/work/
+*.tmp.*
