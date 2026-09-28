@@ -21,10 +21,11 @@ itself, and hands back post-ready copy for every platform.
 /hype a 15s reel where the app roasts a messy desk --aspect 9:16
 /hype --ideas 8                           # only brainstorm, don't render
 /hype --auto --platform tiktok,linkedin   # skip the pick step, build the best idea
+/hype --voice                             # with a narrated voiceover + captions
 ```
 
 Options may come as flags or plain language ("make it vertical", "for LinkedIn",
-"30 seconds", "no music"). Plain language wins over a default, and an explicit
+"30 seconds", "no music", "add a voiceover"). Plain language wins over a default, and an explicit
 flag wins over plain language.
 
 | Option | Values | Default |
@@ -40,6 +41,8 @@ flag wins over plain language.
 | `--audience` | who it's for | inferred |
 | `--cta` | the call to action / link / handle | inferred, else asked |
 | `--lang` | language for on-screen text and captions | the user's language |
+| `--voice [name]` | narrated voiceover with word-by-word captions (optional voice name, e.g. `am_michael`) | off |
+| `--voice-file <file>` | use the user's own voiceover recording | — |
 | `--no-music`, `--no-sfx` | flags | music + sfx on |
 
 **Aspect ratio.** The user decides. `--aspect` (or "vertical", "square",
@@ -134,6 +137,11 @@ Write `<slug>/plan.md`: angle, hook, beat-by-beat storyboard (on-screen text
 verbatim, visuals, motion, timing), sound plan (mood, bpm, sfx cues on cuts),
 and per-aspect layout notes. Durations sum to the target length.
 
+**Voice:** only with `--voice` / `--voice-file` (or when the user asks for
+narration). **Read:** [references/voice.md](references/voice.md). Add a Voice
+column to the storyboard and write `vo.json`. Narration complements the
+on-screen text; it doesn't read it out.
+
 **Gate:** storyboard complete; every on-screen line is readable in the time
 given (~0.3s per word, counted once the line is fully in).
 
@@ -146,6 +154,9 @@ given (~0.3s per word, counted once the line is fully in).
    source (UI, components, screenshots, product photos, copy, colors, fonts).
 3. `node <skill-dir>/scripts/soundtrack.mjs --duration <s> --mood <mood> --sfx "<cues>" --out hype-output/<slug>/composition/music.m4a --beats hype-output/work/beats.json`
    (skip with `--no-music`; you may also use a track the user provides).
+   With voice: run `voice.mjs` first, fix its timing warnings, then pass
+   `--voice composition/voice.wav` here and add captions
+   (see references/voice.md).
 4. Render review stills for **every** requested aspect:
    `node <skill-dir>/scripts/render.mjs hype-output/<slug>/composition --aspect <list> --stills auto --out-dir hype-output/work/stills`
    Look at them. Fix overflow, collisions, cropped text, low contrast, content

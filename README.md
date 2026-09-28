@@ -16,10 +16,16 @@ media videos**: TikTok, Reels, Shorts, X, LinkedIn, YouTube.
 - **Finished, not a draft.** Motion design, a royalty-free soundtrack
   generated for the exact cut, sound effects on the beats, a poster frame, and
   post copy + hashtags written for each platform.
+- **Voiceover (optional).** `--voice` adds narration with a local, free TTS
+  model ([Kokoro](https://huggingface.co/hexgrad/Kokoro-82M), 28 voices),
+  word-by-word captions, and music that ducks under the voice. Or bring your
+  own recording.
 
 The video above was made by `/hype` about itself. See
 [`examples/hype-about-hype`](examples/hype-about-hype) for the brief, ideas,
-storyboard, captions and source.
+storyboard, captions and source, and
+[`examples/hype-about-hype-voice`](examples/hype-about-hype-voice) for the
+narrated version with captions.
 
 ## Install
 
@@ -63,6 +69,8 @@ Restart your agent afterwards. More agents: [`docs/other-agents.md`](docs/other-
 - Node.js 18+
 - ffmpeg on `PATH` (`brew install ffmpeg` / `sudo apt install ffmpeg` / `winget install ffmpeg`)
 - Chromium for rendering, installed by `doctor.mjs --fix` (≈150 MB, one time)
+- Optional, for `--voice`: the voice engine, installed by `doctor.mjs --voice --fix`
+  or `install.sh --voice` (≈700 MB on disk plus a ≈90 MB model, one time)
 
 Check everything with `node <skill-dir>/scripts/doctor.mjs`. On first run the
 skill checks this itself.
@@ -82,6 +90,8 @@ ideas, and asks which one to make.
 /hype --ideas 8                     just brainstorm
 /hype --auto --platform all         pick the best idea and render every size
 /hype --tone "90s infomercial"      any tone you can describe
+/hype --voice                       narrated, with word-by-word captions
+/hype --voice-file my-vo.mp3        use your own voiceover
 ```
 
 | Option | What it does |
@@ -95,6 +105,8 @@ ideas, and asks which one to make.
 | `--tone bold` | `bold` `clean` `playful` `ugc` `cinematic` `deadpan` `infomercial` `corporate`, or freeform. |
 | `--goal signups` | `launch` `signups` `sales` `downloads` `event` `awareness` `feature` `hiring` `community` |
 | `--audience "…"` `--cta "…"` `--lang es` | Steer who it's for, what they should do, and the language. |
+| `--voice [name]` | Narrated voiceover + captions. Voices: `node <skill-dir>/scripts/voice.mjs --list-voices`. |
+| `--voice-file vo.mp3` | Use your own recording (music ducks under it). |
 | `--no-music` `--no-sfx` | Silence. |
 
 You get:
@@ -123,7 +135,9 @@ hype-output/
    a tiny timeline runtime where every frame is a pure function of time and
    layouts adapt to any aspect ratio. It reuses your real UI, colors and fonts.
 5. **Score.** `soundtrack.mjs` synthesizes a music bed (8 moods) and sound
-   effects timed to the cuts. No samples, so it's all royalty-free.
+   effects timed to the cuts. No samples, so it's all royalty-free. With
+   `--voice`, `voice.mjs` speaks the narration locally and the music ducks
+   under it; the mix is normalized to -14 LUFS.
 6. **Render & check.** `render.mjs` screenshots every frame in headless
    Chromium into ffmpeg. The agent reviews contact sheets of every scene in every
    aspect before the final render.
@@ -135,6 +149,10 @@ node skills/hype/scripts/new.mjs my-video/composition --aspect 9:16 --duration 1
 node skills/hype/scripts/preview.mjs my-video/composition          # live preview in the browser
 node skills/hype/scripts/soundtrack.mjs --duration 15 --mood upbeat --sfx "whoosh@2,impact@8" --out my-video/composition/music.m4a
 node skills/hype/scripts/render.mjs my-video/composition --aspect 9:16,1:1 --poster 2 --out my-video/video.mp4
+
+# voiceover (after: node skills/hype/scripts/doctor.mjs --voice --fix)
+node skills/hype/scripts/voice.mjs --script vo.json --out my-video/composition/voice.wav --voice af_heart
+node skills/hype/scripts/soundtrack.mjs --duration 15 --mood chill --voice my-video/composition/voice.wav --out my-video/composition/audio.m4a
 ```
 
 ## What's in this repo
@@ -145,6 +163,11 @@ node skills/hype/scripts/render.mjs my-video/composition --aspect 9:16,1:1 --pos
 - `.claude-plugin/`: Claude Code plugin + marketplace manifest
 - `.claude/skills/hype`, `.agents/skills/hype`, `.opencode/skills/hype`: symlinks for agent discovery
 - `install.sh`: one-line installer
+
+## Credits
+
+- Voice: [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M) (Apache-2.0) via [kokoro-js](https://www.npmjs.com/package/kokoro-js), optional
+- Rendering: [Playwright](https://playwright.dev) + [FFmpeg](https://ffmpeg.org)
 
 ## Inspiration
 

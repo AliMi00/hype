@@ -128,7 +128,8 @@ resolves on a final hit ~1s before the end; don't put the CTA's first
 appearance after that hit. `--sfx-gain`/`--music-gain` rebalance the mix.
 
 If the user supplies music, use it (set `audio` in `hype.config`) — only if
-they have the rights.
+they have the rights. For a voiceover, `voice.mjs` + `soundtrack.mjs --voice`
+and the `.vo-captions` element: see [voice.md](voice.md).
 
 ## Preview
 

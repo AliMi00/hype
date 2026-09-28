@@ -45,6 +45,7 @@ pull a frame or two to confirm audio + video are right.
 
 **Cover text:** words on the poster frame
 **Alt text:** one sentence describing the video
+**Voiceover script:** the narration lines (only when the video has a voice)
 **First comment / pin:** link + one line
 **Best practice:** e.g. "post the 9:16 to TikTok/Reels/Shorts, the 1:1 to LinkedIn/X"
 ```

@@ -29,7 +29,7 @@ else {
 }
 
 // Relative markdown links in the skill + docs resolve
-const mdFiles = ['README.md', 'docs/other-agents.md', 'skills/hype/SKILL.md', ...['understand', 'ideas', 'platforms', 'craft', 'build', 'deliver'].map((n) => `skills/hype/references/${n}.md`)];
+const mdFiles = ['README.md', 'docs/other-agents.md', 'skills/hype/SKILL.md', ...['understand', 'ideas', 'platforms', 'craft', 'build', 'deliver', 'voice'].map((n) => `skills/hype/references/${n}.md`)];
 for (const f of mdFiles) {
   if (!existsSync(join(root, f))) {
     fail(`missing ${f}`);

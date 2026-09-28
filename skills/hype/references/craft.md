@@ -83,6 +83,8 @@ Keep total length to the platform sweet spot. Shorter is almost always better.
 - Place a whoosh so its peak lands on the cut (whoosh@<cut time>).
 - Fewer, better sounds. Repeated little sounds stay quiet (`pop@3*0.5`).
 - The video must still work muted.
+- With a voiceover, leave room for it: fewer sfx, no sfx on top of words, and
+  let the music duck (soundtrack.mjs does it automatically).
 
 ## Multiple aspects
 
