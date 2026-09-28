@@ -1,0 +1,21 @@
+{
+  "name": "hype-scripts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Render, audio and setup helpers for the /hype skill.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "doctor": "node doctor.mjs",
+    "setup": "node doctor.mjs --fix"
+  },
+  "dependencies": {
+    "playwright": "^1.55.0"
+  },
+  "optionalDependencies": {
+    "ffmpeg-static": "^5.2.0"
+  }
+}
