@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>hype about hype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;700&display=block" rel="stylesheet">
+<link href="components.css" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0a14;
+    --fg: #f6f3ff;
+    --muted: #9d97b8;
+    --hot: #ff3d71;
+    --sun: #ffc53d;
+    --violet: #8b5cf6;
+    --c-accent: var(--hot);
+  }
+  * { box-sizing: border-box; }
+  #stage { font-family: 'Space Grotesk', system-ui, sans-serif; color: var(--fg); }
+
+  .scene {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 5rem; padding: 8rem; text-align: center;
+  }
+  [data-orientation="portrait"] .scene { padding: 16rem 8rem 30rem; }
+
+  h1 { font-size: 13rem; line-height: 0.95; letter-spacing: -0.045em; margin: 0; font-weight: 700; }
+  h2 { font-size: 8rem; line-height: 1; letter-spacing: -0.035em; margin: 0; font-weight: 700; }
+  .sub { font-size: 4.2rem; color: var(--muted); margin: 0; }
+  .hot { color: var(--hot); }
+  .sun { color: var(--sun); }
+
+  /* drifting light */
+  .orb { position: absolute; border-radius: 50%; filter: blur(9rem); opacity: 0.35; }
+  .orb.a { width: 80rem; height: 80rem; background: var(--hot); left: -20rem; top: -10rem;
+           translate: calc(sin(var(--t) * 0.5rad) * 15rem) calc(cos(var(--t) * 0.4rad) * 10rem); }
+  .orb.b { width: 70rem; height: 70rem; background: var(--violet); right: -25rem; bottom: -15rem;
+           translate: calc(cos(var(--t) * 0.45rad) * 15rem) calc(sin(var(--t) * 0.6rad) * 12rem); }
+
+  /* 1. hook */
+  #hook h1 + h1 { margin-top: -2rem; }
+  [data-orientation="portrait"] #hook { padding-left: 4rem; padding-right: 4rem; }
+  #hook h1 { white-space: nowrap; }
+  [data-orientation="portrait"] #hook h1 { font-size: 12.5rem; }
+  [data-orientation="square"] #hook h1 { font-size: 11.5rem; }
+  #hook { gap: 1rem; }
+  #hook .push { scale: calc(1 + var(--p) * 0.06); display: flex; flex-direction: column; gap: 2rem; }
+
+  /* 2. terminal */
+  .terminal { width: 92rem; font-size: 4.3rem; }
+  [data-orientation="landscape"] .terminal { width: 120rem; font-size: 4.2rem; }
+  [data-orientation="square"] .terminal { width: 86rem; font-size: 3.4rem; }
+  .terminal .prompt { color: var(--sun); }
+  .terminal .ok { color: #7ee2a8; }
+  .terminal .dim { color: #8a8fa3; }
+
+  /* 3. ideas */
+  .cards { display: flex; flex-direction: column; gap: 3rem; width: 88rem; position: relative; }
+  [data-orientation="portrait"] .idea b { font-size: 5.4rem; }
+  [data-orientation="portrait"] .idea small { font-size: 3rem; }
+  [data-orientation="landscape"] .cards { flex-direction: row; width: 150rem; }
+  [data-orientation="square"] .cards { width: 80rem; gap: 2.4rem; }
+  .idea {
+    flex: 1; text-align: left; border-radius: 3rem; padding: 3.4rem 4rem;
+    background: rgba(255,255,255,0.06); box-shadow: inset 0 0 0 0.3rem rgba(255,255,255,0.1);
+    transition: none;
+  }
+  [data-orientation="square"] .idea { padding: 2.6rem 3.4rem; }
+  .idea b { display: block; font-size: 4.6rem; line-height: 1.1; letter-spacing: -0.02em; }
+  .idea small { display: block; margin-top: 1.4rem; font: 400 2.6rem 'JetBrains Mono', monospace; color: var(--muted); }
+  .idea.picked { background: var(--hot); box-shadow: 0 3rem 8rem rgba(255, 61, 113, 0.45); }
+  .idea.picked small { color: #ffe1ea; }
+
+  /* 4. every size */
+  .frame {
+    border-radius: 3rem; border: 0.6rem solid var(--fg);
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(160deg, rgba(255,61,113,0.25), rgba(139,92,246,0.25));
+  }
+  .frame span { font: 700 7rem 'JetBrains Mono', monospace; }
+
+  /* 5. cta */
+  #cta { gap: 4rem; }
+  #cta h1 { font-size: 24rem; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.06em; }
+  [data-orientation="portrait"] #cta .sub { font-size: 5rem; }
+  #cta .pill { font-size: 4rem; padding: 2.2rem 4.6rem; font-family: 'JetBrains Mono', monospace; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="orb a"></div>
+  <div class="orb b"></div>
+
+  <!-- 1. Hook: the maker's pain -->
+  <section class="scene" id="hook" data-start="0" data-end="2.54" data-out="up" data-out-dur="0.3">
+    <div class="push">
+      <h1 data-split="words" data-in="up" data-at="0" data-dur="0.45">You shipped it.</h1>
+      <h1 class="hot" data-split="words" data-in="pop" data-at="0.95" data-dur="0.45">Nobody saw it.</h1>
+    </div>
+  </section>
+
+  <!-- 2. One line in the terminal -->
+  <section class="scene" id="terminal" data-start="2.54" data-end="6.1" data-out="fade" data-out-dur="0.3">
+    <h2 data-in="up" data-at="0.05">Type <span class="sun">one line.</span></h2>
+    <div class="terminal" data-in="up" data-at="0.15">
+      <div><span class="prompt">&gt; </span><span id="typed"></span></div>
+      <div class="dim" data-in="fade" data-at="1.55" data-dur="0.2">reading README, site, colors…</div>
+      <div class="ok" data-in="left" data-at="1.95" data-dur="0.3">✓ brief.md: who it's for</div>
+      <div class="ok" data-in="left" data-at="2.35" data-dur="0.3">✓ 5 video ideas ready</div>
+    </div>
+  </section>
+
+  <!-- 3. Ideas, pick one -->
+  <section class="scene" id="ideas" data-start="6.1" data-end="10.17" data-out="fade" data-out-dur="0.3">
+    <h2 data-in="up" data-at="0.05">Get ideas <span class="hot">that fit.</span></h2>
+    <div class="cards">
+      <div class="idea" id="idea1" data-in="up" data-at="0.4"><b>POV: you finally shipped</b><small>9:16 · 15s · bold</small></div>
+      <div class="idea" data-in="up" data-at="0.55"><b>Before → after in 10s</b><small>1:1 · 12s · clean</small></div>
+      <div class="idea" data-in="up" data-at="0.7"><b>3 things it does that you didn't expect</b><small>16:9 · 20s · playful</small></div>
+      <div class="cursor" id="cursor"></div>
+      <div class="tap" id="tap"></div>
+    </div>
+    <p class="sub" data-in="fade" data-at="2.6">…or bring your own idea.</p>
+  </section>
+
+  <!-- 4. Every size -->
+  <section class="scene" id="sizes" data-start="10.17" data-end="12.71" data-out="zoom" data-out-dur="0.3">
+    <h2 data-in="up" data-at="0.05">Every size.</h2>
+    <div class="frame" id="frame" data-in="zoom" data-at="0.15"><span id="ratio">9:16</span></div>
+  </section>
+
+  <!-- 5. CTA -->
+  <section class="scene" id="cta" data-start="12.71" data-end="16">
+    <h1 data-in="blur" data-at="0" data-dur="0.5">/hype</h1>
+    <p class="sub" data-in="up" data-at="0.35">Marketing videos from one line.<br>Free &amp; open source.</p>
+    <div class="pill" data-in="pop" data-at="0.7">github.com/AliMi00/hype</div>
+  </section>
+
+  <div class="progress"></div>
+</div>
+
+<script src="hype.js"></script>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const typed = $('typed'), cursor = $('cursor'), tap = $('tap'), idea1 = $('idea1');
+  const frame = $('frame'), ratio = $('ratio');
+
+  // Aspect frames the "every size" box morphs through: [w, h] in rem.
+  const sizes = [['9:16', 33.75, 60], ['1:1', 48, 48], ['16:9', 72, 40.5]];
+
+  hype
+    .config({ width: 1080, height: 1920, fps: 30, duration: 16, background: '#0c0a14', audio: 'music.m4a' })
+    .update((t, h) => {
+      // terminal typing
+      h.typewriter(typed, '/hype my indie app', t, 2.9, 20, t < 4.2);
+
+      // cursor glides to the first idea and taps it
+      const tx = h.tween(t, 7.6, 8.35, 70, 22, 'inOutCubic');
+      const ty = h.tween(t, 7.6, 8.35, 60, 8, 'inOutCubic');
+      cursor.style.left = tx + 'rem';
+      cursor.style.top = ty + 'rem';
+      cursor.style.opacity = h.progress(t, 7.4, 7.7);
+      tap.style.left = '24rem';
+      tap.style.top = '10rem';
+      tap.style.setProperty('--tap', t < 8.4 ? 1 : h.progress(t, 8.4, 8.9, 'outCubic'));
+      idea1.classList.toggle('picked', t >= 8.45);
+
+      // aspect morph: 9:16 → 1:1 → 16:9
+      let w = sizes[0][1], hgt = sizes[0][2], label = sizes[0][0];
+      const steps = [[10.75, 11.05, 1], [11.45, 11.75, 2]];
+      for (const [a, b, i] of steps) {
+        const p = h.progress(t, a, b, 'inOutCubic');
+        w = h.lerp(w, sizes[i][1], p);
+        hgt = h.lerp(hgt, sizes[i][2], p);
+        if (t >= (a + b) / 2) label = sizes[i][0];
+      }
+      frame.style.width = w + 'rem';
+      frame.style.height = hgt + 'rem';
+      ratio.textContent = label;
+    })
+    .start();
+</script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+/*
+ * components.css — building blocks for social videos. All sizes in rem
+ * (1rem = 1% of the short side), so they scale with every aspect ratio.
+ * Override the custom properties per composition to match the brand.
+ */
+:root {
+  --c-bg: #0b0b12;
+  --c-fg: #ffffff;
+  --c-accent: #ff4d6d;
+  --c-radius: 3rem;
+  --c-shadow: 0 4rem 10rem rgba(0, 0, 0, 0.45);
+}
+
+/* ---- Phone mockup: <div class="phone"><div class="screen">…</div></div> ---- */
+.phone {
+  position: relative;
+  width: 46rem;
+  aspect-ratio: 9 / 19.5;
+  border-radius: 7rem;
+  padding: 1.6rem;
+  background: linear-gradient(145deg, #2b2b33, #0d0d12);
+  box-shadow: var(--c-shadow), inset 0 0 0 0.4rem #3a3a44;
+}
+.phone::before { /* dynamic island */
+  content: '';
+  position: absolute;
+  top: 3rem;
+  left: 50%;
+  translate: -50% 0;
+  width: 13rem;
+  height: 3.6rem;
+  border-radius: 99rem;
+  background: #000;
+  z-index: 2;
+}
+.phone > .screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 5.6rem;
+  overflow: hidden;
+  background: #fff;
+  color: #111;
+}
+.phone > .screen > img,
+.phone > .screen > video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ---- Browser window: <div class="browser"><div class="bar"><i></i><i></i><i></i><span>site.com</span></div><div class="page">…</div></div> ---- */
+.browser {
+  width: 80rem;
+  border-radius: 2rem;
+  overflow: hidden;
+  background: #fff;
+  color: #111;
+  box-shadow: var(--c-shadow);
+}
+[data-orientation="landscape"] .browser { width: 130rem; }
+.browser > .bar {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  height: 6rem;
+  padding: 0 2.4rem;
+  background: #eceef2;
+  font: 500 2.2rem/1 system-ui, sans-serif;
+  color: #555;
+}
+.browser > .bar > i { width: 1.8rem; height: 1.8rem; border-radius: 50%; background: #ff5f57; }
+.browser > .bar > i:nth-child(2) { background: #febc2e; }
+.browser > .bar > i:nth-child(3) { background: #28c840; }
+.browser > .bar > span {
+  flex: 1;
+  margin-left: 2rem;
+  padding: 1rem 2rem;
+  border-radius: 99rem;
+  background: #fff;
+}
+.browser > .page { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }
+.browser > .page > img,
+.browser > .page > video { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+
+/* ---- Terminal window: <div class="terminal"><div>$ line one</div><div>line two</div></div> ---- */
+.terminal {
+  width: 80rem;
+  border-radius: 2rem;
+  background: #0f1117;
+  color: #e6e6e6;
+  font: 2.8rem/1.5 ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  padding: 7rem 3.4rem 3.4rem;
+  position: relative;
+  box-shadow: var(--c-shadow);
+  text-align: left;
+}
+.terminal > div { min-height: 1.5em; white-space: pre-wrap; } /* one <div> per line */
+.terminal::before {
+  content: '';
+  position: absolute;
+  top: 2.4rem;
+  left: 3rem;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 50%;
+  background: #ff5f57;
+  box-shadow: 3rem 0 #febc2e, 6rem 0 #28c840;
+}
+
+/* ---- Short-form caption box (the "TikTok text" look) ---- */
+.caption {
+  display: inline;
+  font: 800 6rem/1.35 system-ui, sans-serif;
+  padding: 0.4rem 1.8rem;
+  background: #fff;
+  color: #000;
+  border-radius: 1.4rem;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.caption.dark { background: #000; color: #fff; }
+.caption.accent { background: var(--c-accent); color: #fff; }
+/* Outlined text for use over busy video */
+.outline-text {
+  font-weight: 900;
+  color: #fff;
+  -webkit-text-stroke: 0.5rem #000;
+  paint-order: stroke fill;
+}
+
+/* ---- Pills, badges, buttons ---- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.4rem;
+  padding: 1.6rem 3.4rem;
+  border-radius: 99rem;
+  font: 700 3.4rem/1 system-ui, sans-serif;
+  background: var(--c-accent);
+  color: #fff;
+}
+.pill.ghost { background: transparent; box-shadow: inset 0 0 0 0.35rem currentColor; color: var(--c-fg); }
+.badge {
+  display: inline-block;
+  padding: 0.8rem 1.8rem;
+  border-radius: 1rem;
+  font: 700 2.4rem/1 system-ui, sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--c-fg);
+}
+
+/* ---- Card ---- */
+.card {
+  border-radius: var(--c-radius);
+  padding: 4rem;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(2rem);
+}
+
+/* ---- Fake pointer: position with left/top from hype.update() ---- */
+.cursor {
+  position: absolute;
+  width: 5rem;
+  height: 5rem;
+  z-index: 50;
+  pointer-events: none;
+  background: no-repeat center / contain
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 2l16 10-7 1.5L9.5 21z' fill='%23111' stroke='%23fff' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
+  filter: drop-shadow(0 0.6rem 1rem rgba(0, 0, 0, 0.35));
+}
+/* Tap ripple: set --tap (0..1) from hype.update() */
+.tap {
+  position: absolute;
+  width: 12rem;
+  height: 12rem;
+  margin: -6rem 0 0 -6rem;
+  border-radius: 50%;
+  border: 0.6rem solid rgba(255, 255, 255, 0.9);
+  opacity: calc(1 - var(--tap, 1));
+  scale: calc(0.3 + var(--tap, 1) * 0.9);
+  pointer-events: none;
+  z-index: 49;
+}
+
+/* ---- Progress bar across the top (retention trick) ---- */
+.progress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 0.8rem;
+  width: calc(var(--t) / var(--duration, 15) * 100%);
+  background: var(--c-accent);
+  z-index: 60;
+}
+
+/* ---- Helpers ---- */
+.fill { position: absolute; inset: 0; }
+.cover { width: 100%; height: 100%; object-fit: cover; }
+.center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.stack { display: flex; flex-direction: column; gap: 3rem; }
+.row { display: flex; gap: 3rem; align-items: center; }
+[data-orientation="portrait"] .row.wrap-portrait { flex-direction: column; }
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Platform UI safe zones (portrait): keep key content inside .safe */
+.safe { position: absolute; inset: 0; }
+[data-orientation="portrait"] .safe { inset: 12% 12% 22% 6%; }
+[data-orientation="landscape"] .safe { inset: 6% 5%; }
+[data-orientation="square"] .safe { inset: 6%; }
