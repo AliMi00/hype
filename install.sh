@@ -6,6 +6,7 @@
 #   ./install.sh --dir ~/my/skills   # somewhere else (any agent's skills folder)
 #   ./install.sh --project           # into ./.claude/skills of the current project
 #   ./install.sh --no-deps           # copy the skill only, skip Playwright/Chromium
+#   ./install.sh --voice             # also install the voiceover engine (~700 MB)
 #
 # Default target: ~/.claude/skills/hype (Claude Code, all projects).
 
@@ -14,13 +15,15 @@ set -euo pipefail
 REPO="https://github.com/AliMi00/hype"
 TARGET_ROOT="${HOME}/.claude/skills"
 DEPS=1
+VOICE=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
     --dir) TARGET_ROOT="$2"; shift 2 ;;
     --project) TARGET_ROOT="$(pwd)/.claude/skills"; shift ;;
     --no-deps) DEPS=0; shift ;;
-    -h|--help) sed -n '2,11p' "$0"; exit 0 ;;
+    --voice) VOICE=1; shift ;;
+    -h|--help) sed -n '2,12p' "$0"; exit 0 ;;
     *) echo "unknown option: $1" >&2; exit 1 ;;
   esac
 done
@@ -47,17 +50,23 @@ DEST="$TARGET_ROOT/hype"
 say "Installing /hype → $DEST"
 mkdir -p "$TARGET_ROOT"
 if [ -d "$DEST" ]; then
-  # Keep installed dependencies across updates.
+  # Keep installed dependencies (and the downloaded voice model) across updates.
   if [ -d "$DEST/scripts/node_modules" ]; then mv "$DEST/scripts/node_modules" "$TARGET_ROOT/.hype-node_modules"; fi
+  if [ -d "$DEST/scripts/voice/node_modules" ]; then mv "$DEST/scripts/voice/node_modules" "$TARGET_ROOT/.hype-voice-node_modules"; fi
   rm -rf "$DEST"
 fi
 mkdir -p "$DEST"
 (cd "$SRC" && tar cf - --exclude node_modules --exclude .DS_Store .) | (cd "$DEST" && tar xf -)
 if [ -d "$TARGET_ROOT/.hype-node_modules" ]; then mv "$TARGET_ROOT/.hype-node_modules" "$DEST/scripts/node_modules"; fi
+if [ -d "$TARGET_ROOT/.hype-voice-node_modules" ]; then mv "$TARGET_ROOT/.hype-voice-node_modules" "$DEST/scripts/voice/node_modules"; fi
 
 if [ "$DEPS" = 1 ]; then
   say "Setting up the renderer (Playwright + Chromium, one time)…"
-  node "$DEST/scripts/doctor.mjs" --fix || true
+  if [ "$VOICE" = 1 ]; then
+    node "$DEST/scripts/doctor.mjs" --fix --voice || true
+  else
+    node "$DEST/scripts/doctor.mjs" --fix || true
+  fi
 fi
 
 cat <<EOF
