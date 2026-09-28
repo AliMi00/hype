@@ -125,6 +125,29 @@
   paint-order: stroke fill;
 }
 
+/* ---- Voiceover captions: <div class="vo-captions" data-captions="chunk"></div> ---- */
+.vo-captions {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 14%;
+  z-index: 40;
+  text-align: center;
+  font: 900 7rem/1.15 system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  color: #fff;
+  -webkit-text-stroke: 0.45rem #000;
+  paint-order: stroke fill;
+  text-shadow: 0 0.6rem 2rem rgba(0, 0, 0, 0.5);
+}
+[data-orientation="portrait"] .vo-captions { bottom: 27%; left: 7%; right: 15%; }
+[data-orientation="landscape"] .vo-captions { bottom: 7%; font-size: 6.5rem; }
+[data-orientation="square"] .vo-captions { bottom: 4%; font-size: 6rem; }
+.vo-captions span { display: inline-block; }
+.vo-captions[data-captions="line"] span:not(.said) { opacity: 0.45; }
+.vo-captions .now { color: var(--c-accent); scale: 1.08; }
+.vo-captions[data-captions="word"] { font-size: 11rem; }
+
 /* ---- Pills, badges, buttons ---- */
 .pill {
   display: inline-flex;

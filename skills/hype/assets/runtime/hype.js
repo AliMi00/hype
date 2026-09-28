@@ -19,6 +19,11 @@
  * Enter/exit types: fade up down left right zoom pop blur wipe wipe-up
  *                   wipe-down drop spin
  *
+ * Voiceover captions: hype.config({ captions: 'voice.json' }) (from voice.mjs)
+ *   <div class="vo-captions" data-captions="chunk" data-chunk="3"></div>
+ *   modes: line (whole line, spoken words lit), chunk (a few words at a time),
+ *          word (one big word at a time). The current word gets class "now".
+ *
  * Script API: hype.config({...}), hype.update((t, h) => ...), hype.start(),
  *             hype.ease.*, hype.progress, hype.tween, hype.lerp, hype.clamp,
  *             hype.typewriter, hype.count, hype.local(el, t)
@@ -27,7 +32,9 @@
   'use strict';
 
   const render = window.__HYPE_RENDER__ || null;
-  const cfg = { width: 1080, height: 1920, fps: 30, duration: 15, background: '#000', audio: null };
+  const cfg = { width: 1080, height: 1920, fps: 30, duration: 15, background: '#000', audio: null, captions: null };
+  let captionLines = [];
+  let captionEls = [];
   const updaters = [];
   let animated = [];
   let scenes = [];
@@ -241,6 +248,7 @@
         } catch (e) {}
       }
     }
+    for (const el of captionEls) renderCaptions(el, t);
     for (const fn of updaters) fn(t, api);
     if (render) {
       const waits = [];
@@ -260,6 +268,57 @@
       // Two frames so layout, images and decoded video are painted.
       await new Promise((ok) => requestAnimationFrame(() => requestAnimationFrame(ok)));
     }
+  }
+
+  // ---------- voiceover captions ----------
+  async function loadCaptions() {
+    captionEls = Array.from(stage.querySelectorAll('.vo-captions,[data-captions]'));
+    if (!cfg.captions) return;
+    let data = cfg.captions;
+    if (typeof data === 'string') {
+      try {
+        data = await (await fetch(data)).json();
+      } catch (e) {
+        console.error('hype: could not load captions ' + cfg.captions);
+        return;
+      }
+    }
+    captionLines = (data.lines || data).filter((l) => l.words && l.words.length);
+  }
+
+  function renderCaptions(el, t) {
+    const mode = el.dataset.captions || 'chunk';
+    const hold = num(el.dataset.hold, 0.3);
+    const line = captionLines.find((l) => t >= l.at - 0.02 && t < l.end + hold);
+    let words = [];
+    if (line) {
+      if (mode === 'line') words = line.words;
+      else {
+        const size = mode === 'word' ? 1 : num(el.dataset.chunk, 3);
+        let idx = line.words.findIndex((w) => t < w.end);
+        if (idx === -1) idx = line.words.length - 1;
+        const from = Math.floor(idx / size) * size;
+        words = line.words.slice(from, from + size);
+      }
+    }
+    const key = words.map((w) => w.start).join(',');
+    if (el.__key !== key) {
+      el.__key = key;
+      el.innerHTML = '';
+      for (const w of words) {
+        const span = document.createElement('span');
+        span.textContent = w.w;
+        el.appendChild(span);
+        el.appendChild(document.createTextNode(' '));
+      }
+      el.__spans = Array.from(el.querySelectorAll('span'));
+    }
+    (el.__spans || []).forEach((span, i) => {
+      const w = words[i];
+      span.classList.toggle('said', t >= w.start);
+      span.classList.toggle('now', t >= w.start && t < w.end);
+    });
+    el.classList.toggle('is-active', words.length > 0);
   }
 
   function applyStageSize() {
@@ -301,6 +360,7 @@
     Object.assign(document.body.style, { margin: '0', background: render ? cfg.background : '#111' });
     applyStageSize();
     collect();
+    await loadCaptions();
     await waitForAssets();
     await seek(0);
     isReady = true;
