@@ -89,7 +89,7 @@ for (const f of tracked) {
   const full = join(root, f);
   if (!existsSync(full) || lstatSync(full).isSymbolicLink()) continue;
   const text = readFileSync(full, 'utf8');
-  for (const [re, what] of patterns) if (re.test(text)) fail(`${f}: looks like it contains a ${what}`);
+  for (const [re, what] of patterns) if (re.test(text)) fail(`${f}: looks like it contains a secret (${what})`);
 }
 
 // Optional: smoke-test the tools end to end
