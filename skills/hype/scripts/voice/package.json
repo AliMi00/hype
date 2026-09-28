@@ -1,0 +1,11 @@
+{
+  "name": "hype-voice",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Optional text-to-speech for /hype voiceovers (Kokoro, runs locally).",
+  "type": "module",
+  "license": "MIT",
+  "dependencies": {
+    "kokoro-js": "^1.2.1"
+  }
+}
