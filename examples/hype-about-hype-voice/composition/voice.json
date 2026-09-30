@@ -3,222 +3,222 @@
   "lines": [
     {
       "at": 0.15,
-      "end": 1.599,
+      "end": 1.616,
       "text": "Launch day. Crickets.",
-      "voice": "am_michael",
+      "voice": "af_heart",
       "words": [
         {
           "w": "Launch",
           "start": 0.15,
-          "end": 0.528
+          "end": 0.533
         },
         {
           "w": "day.",
-          "start": 0.528,
-          "end": 0.906
+          "start": 0.533,
+          "end": 0.915
         },
         {
           "w": "Crickets.",
-          "start": 0.906,
-          "end": 1.599
+          "start": 0.915,
+          "end": 1.616
         }
       ]
     },
     {
       "at": 2.7,
-      "end": 3.927,
+      "end": 3.863,
       "text": "So give it one line.",
-      "voice": "am_michael",
+      "voice": "af_heart",
       "words": [
         {
           "w": "So",
           "start": 2.7,
-          "end": 2.836
+          "end": 2.829
         },
         {
           "w": "give",
-          "start": 2.836,
-          "end": 3.109
+          "start": 2.829,
+          "end": 3.088
         },
         {
           "w": "it",
-          "start": 3.109,
-          "end": 3.245
+          "start": 3.088,
+          "end": 3.217
         },
         {
           "w": "one",
-          "start": 3.245,
-          "end": 3.45
+          "start": 3.217,
+          "end": 3.41
         },
         {
           "w": "line.",
-          "start": 3.45,
-          "end": 3.927
+          "start": 3.41,
+          "end": 3.863
         }
       ]
     },
     {
       "at": 4.2,
-      "end": 5.887,
+      "end": 5.725,
       "text": "It reads your project first.",
-      "voice": "am_michael",
+      "voice": "af_heart",
       "words": [
         {
           "w": "It",
           "start": 4.2,
-          "end": 4.33
+          "end": 4.317
         },
         {
           "w": "reads",
-          "start": 4.33,
-          "end": 4.654
+          "start": 4.317,
+          "end": 4.611
         },
         {
           "w": "your",
-          "start": 4.654,
-          "end": 4.914
+          "start": 4.611,
+          "end": 4.845
         },
         {
           "w": "project",
-          "start": 4.914,
-          "end": 5.368
+          "start": 4.845,
+          "end": 5.256
         },
         {
           "w": "first.",
-          "start": 5.368,
-          "end": 5.887
+          "start": 5.256,
+          "end": 5.725
         }
       ]
     },
     {
       "at": 6.3,
-      "end": 7.968,
+      "end": 7.951,
       "text": "Then pitches ideas that fit.",
-      "voice": "am_michael",
+      "voice": "af_heart",
       "words": [
         {
           "w": "Then",
           "start": 6.3,
-          "end": 6.557
+          "end": 6.554
         },
         {
           "w": "pitches",
-          "start": 6.557,
-          "end": 7.005
+          "start": 6.554,
+          "end": 6.998
         },
         {
           "w": "ideas",
-          "start": 7.005,
-          "end": 7.326
+          "start": 6.998,
+          "end": 7.316
         },
         {
           "w": "that",
-          "start": 7.326,
-          "end": 7.583
+          "start": 7.316,
+          "end": 7.57
         },
         {
           "w": "fit.",
-          "start": 7.583,
-          "end": 7.968
+          "start": 7.57,
+          "end": 7.951
         }
       ]
     },
     {
       "at": 8.5,
-      "end": 10.119,
+      "end": 9.904,
       "text": "Pick one, or bring your own.",
-      "voice": "am_michael",
+      "voice": "af_heart",
       "words": [
         {
           "w": "Pick",
           "start": 8.5,
-          "end": 8.74
+          "end": 8.708
         },
         {
           "w": "one,",
-          "start": 8.74,
-          "end": 9.1
+          "start": 8.708,
+          "end": 9.02
         },
         {
           "w": "or",
-          "start": 9.1,
-          "end": 9.219
+          "start": 9.02,
+          "end": 9.124
         },
         {
           "w": "bring",
-          "start": 9.219,
-          "end": 9.519
+          "start": 9.124,
+          "end": 9.384
         },
         {
           "w": "your",
-          "start": 9.519,
-          "end": 9.759
+          "start": 9.384,
+          "end": 9.592
         },
         {
           "w": "own.",
-          "start": 9.759,
-          "end": 10.119
+          "start": 9.592,
+          "end": 9.904
         }
       ]
     },
     {
       "at": 10.4,
-      "end": 12.421,
+      "end": 12.417,
       "text": "Vertical. Square. Wide. Done.",
-      "voice": "am_michael",
+      "voice": "af_heart",
       "words": [
         {
           "w": "Vertical.",
           "start": 10.4,
-          "end": 11.054
+          "end": 11.053
         },
         {
           "w": "Square.",
-          "start": 11.054,
-          "end": 11.589
+          "start": 11.053,
+          "end": 11.586
         },
         {
           "w": "Wide.",
-          "start": 11.589,
-          "end": 12.005
+          "start": 11.586,
+          "end": 12.002
         },
         {
           "w": "Done.",
-          "start": 12.005,
-          "end": 12.421
+          "start": 12.002,
+          "end": 12.417
         }
       ]
     },
     {
       "at": 13,
-      "end": 14.65,
+      "end": 14.589,
       "text": "Hype. Free and open source.",
-      "voice": "am_michael",
+      "voice": "af_heart",
       "words": [
         {
           "w": "Hype.",
           "start": 13,
-          "end": 13.428
+          "end": 13.412
         },
         {
           "w": "Free",
-          "start": 13.428,
-          "end": 13.672
+          "start": 13.412,
+          "end": 13.647
         },
         {
           "w": "and",
-          "start": 13.672,
-          "end": 13.855
+          "start": 13.647,
+          "end": 13.824
         },
         {
           "w": "open",
-          "start": 13.855,
-          "end": 14.1
+          "start": 13.824,
+          "end": 14.059
         },
         {
           "w": "source.",
-          "start": 14.1,
-          "end": 14.65
+          "start": 14.059,
+          "end": 14.589
         }
       ]
     }
